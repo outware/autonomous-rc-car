@@ -27,7 +27,7 @@ uint8_t txid[3] = { 0x00, 0x00, 0x00 };
 nRF24 radio(CE_PIN, CSN_PIN);
 V202_TX tx(radio);
 
-bool debug = true;
+bool debug = false;
 
 uint8_t throttle, flags;
 int8_t yaw, pitch, roll;
@@ -162,7 +162,6 @@ void setup()
   Serial.write("Result: ");
   Serial.print(res);
   Serial.write("\n");
-  Serial.write("Attempting to bind to car\n");
   bindToCar();
 } 
 

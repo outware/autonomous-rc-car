@@ -175,6 +175,8 @@ void V202_TX::command(uint8_t throttle, int8_t yaw, int8_t pitch, int8_t roll, u
   uint8_t rf_ch = rf_channels[rf_ch_num >> 1];
   rf_ch_num++; if (rf_ch_num >= 32) rf_ch_num = 0;
 //  Serial.print(rf_ch); Serial.write("\n");
+  Serial.print("Freq: 0x");
+  Serial.println(String(rf_ch, HEX));
   radio.write_register(RF_CH, rf_ch);
   radio.flush_tx();
   radio.write_payload(buf, 16);
