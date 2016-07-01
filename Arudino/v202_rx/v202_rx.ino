@@ -64,7 +64,7 @@ void loop()
       Serial.print("\t"); Serial.println(rxValues.crc);*/
       //time = newTime;
 
-      /*
+      
       Serial.print(newTime - time); //120 ms for 16 Mhz (currently showing as 180ms)
       Serial.print(" :\t");Serial.print(rxValues.throttle);
       Serial.print("\t Steer:"); Serial.print(rxValues.yaw);
@@ -75,7 +75,7 @@ void loop()
       Serial.print("\t ?:"); Serial.print(rxValues.trim_roll);
       Serial.print("\t"); Serial.print(rxValues.flags);
       Serial.print("\t CRC:"); Serial.println(rxValues.crc);
-      */
+      
     break;
     
     case BOUND_NO_VALUES:

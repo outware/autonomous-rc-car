@@ -27,7 +27,7 @@ uint8_t txid[3] = { 0x00, 0x00, 0x00 };
 nRF24 radio(CE_PIN, CSN_PIN);
 V202_TX tx(radio);
 
-bool debug = false;
+bool debug = true;
 
 uint8_t throttle, flags;
 int8_t yaw, pitch, roll;
@@ -44,17 +44,12 @@ int f1 = 110;
 int f2 = 110;
 int f3 = 110;
 
-int counter = 0;
-int direction = 1;
-bool bind = true;
-bool calibrated = false;
-
 void calibrate()
 {
   a0min = 150; a0max=600;
-  a1min = 150; a1max=600;
-  a2min = 150; a2max=600;
-  a3min = 150; a3max=600;
+  a1min = 150; a0max=600;
+  a2min = 150; a0max=600;
+  a3min = 150; a0max=600;
 }
 
 void initInput()
@@ -106,52 +101,10 @@ bool readInput()
   return changed;
 }
 
-bool bindToCar(){
-    Serial.write("Attempting to bind to car\n");
-    throttle = 110;
-    flags = 0xc0;
-    // Auto bind in 2.5 sec after turning on
-    counter += direction;
-    if (direction > 0) {
-      if (counter > 256) {
-        direction = -1;
-        Serial.write("Counter was greater than 256\n");
-      }
-    } else {
-      if (counter < 0) {
-        direction = 1;
-        counter = 0;
-        bind = false;
-        flags = 0;
-        Serial.write("Bound to car\n");
-      }
-    }
-    if (direction > 0) {
-      if (throttle >= 255) direction = -1;
-    } else {
-      if (throttle == 0) {
-        direction = 1;
-        counter = 0;
-        bind = false;
-        flags = 0;
-        Serial.write("Apparently Bound\n");
-        Serial.write("a0min "); Serial.print(a0min);
-        Serial.write(" a0max "); Serial.print(a0max);
-        Serial.write("\na1min "); Serial.print(a1min);
-        Serial.write(" a1max "); Serial.print(a1max);
-        Serial.write("\na2min "); Serial.print(a2min);
-        Serial.write(" a2max "); Serial.print(a2max);
-        Serial.write("\na3min "); Serial.print(a3min);
-        Serial.write(" a3max "); Serial.print(a3max);
-      }
-    }
-}
-
 void setup() 
 {
   initInput();
-  //readInput();
-  fakeInput();
+  readInput();
   Serial.begin(115200);
   tx.setTXId(txid);  
   tx.begin();
@@ -162,12 +115,14 @@ void setup()
   Serial.write("Result: ");
   Serial.print(res);
   Serial.write("\n");
-  bindToCar();
 } 
 
+int counter = 0;
+int direction = 1;
+bool bind = true;
+bool calibrated = false;
 void loop() 
 {
-  /*
   //bool changed = readInput();
   bool changed = fakeInput();
   if (false) {
@@ -193,7 +148,7 @@ void loop()
         flags = 0;
         Serial.write("Bound\n");
       }
-    }
+    } 
     if (direction > 0) {
       if (throttle >= 255) direction = -1;
     } else {
@@ -236,11 +191,10 @@ void loop()
     }
     //
   }
-  */
-
   yaw = 16; pitch = 16; roll = 16;
   flags = 0x10;
   tx.command(throttle, yaw, pitch, roll, flags);
+
   if (debug) {
     Serial.write("Throttle: "); Serial.print(throttle);
     Serial.write(" Yaw: "); Serial.print(yaw);
