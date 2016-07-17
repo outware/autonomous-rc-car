@@ -64,16 +64,26 @@ void loop()
       Serial.print("\t"); Serial.println(rxValues.crc);*/
       //time = newTime;
 
-      
+      Serial.print("0x0");Serial.print(String(protocol.mRfChNum,HEX));  //Channel the packet was received on
+      Serial.print("\t");
       Serial.print(newTime - time); //120 ms for 16 Mhz (currently showing as 180ms)
       Serial.print(" :\t");Serial.print(rxValues.throttle);
-      Serial.print("\t Steer:"); Serial.print(rxValues.yaw);
-      Serial.print("\t Throttle:"); Serial.print(rxValues.pitch);
-      Serial.print("\t"); Serial.print(rxValues.roll);
-      Serial.print("\t ST Trim:"); Serial.print(rxValues.trim_yaw);
-      Serial.print("\t TH Trim:"); Serial.print(rxValues.trim_pitch);
-      Serial.print("\t ?:"); Serial.print(rxValues.trim_roll);
-      Serial.print("\t"); Serial.print(rxValues.flags);
+      Serial.print(" :\t Throttle:");Serial.print(rxValues.throttle);
+      Serial.print("\t Yaw (Steer):"); Serial.print(rxValues.yaw);
+      Serial.print("\t Pitch (Throttle):"); Serial.print(rxValues.pitch);
+      Serial.print("\t Roll:"); Serial.print(rxValues.roll);
+      Serial.print("\t TY (ST):"); Serial.print(rxValues.trim_yaw);
+      Serial.print("\t TP (TH):"); Serial.print(rxValues.trim_pitch);
+      Serial.print("\t TR:"); Serial.print(rxValues.trim_roll);
+      Serial.print("\t f6:"); Serial.print(rxValues.frame6);
+      Serial.print("\t f7:"); Serial.print(rxValues.frame7);
+      Serial.print("\t f8:"); Serial.print(rxValues.frame8);
+      Serial.print("\t f9:"); Serial.print(rxValues.frame9);
+      Serial.print("\t f10:"); Serial.print(rxValues.frame10);
+      Serial.print("\t f11:"); Serial.print(rxValues.frame11);
+      Serial.print("\t f12:"); Serial.print(rxValues.frame12);
+      Serial.print("\t f13:"); Serial.print(rxValues.frame13);
+      Serial.print("\t Flags:"); Serial.print(rxValues.flags);
       Serial.print("\t CRC:"); Serial.println(rxValues.crc);
       
     break;

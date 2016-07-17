@@ -21,6 +21,14 @@ typedef struct __attribute__((__packed__)) {
   int8_t trim_yaw;
   int8_t trim_pitch;
   int8_t trim_roll;
+  int8_t frame6;
+  uint8_t frame7;
+  uint8_t frame8;
+  uint8_t frame9;
+  int8_t frame10;
+  int8_t frame11;
+  int8_t frame12;
+  int8_t frame13;
   uint8_t flags;
   uint8_t crc;
 } rx_values_t;
@@ -53,6 +61,8 @@ public:
 
   void init(nrf24l01p *wireless);
   uint8_t run(rx_values_t *rx_value );
+  uint8_t mRfChNum;
+
   
 protected:
   void retrieveFrequency();
@@ -62,7 +72,6 @@ protected:
   nrf24l01p *mWireless;
   uint8_t mTxid[3];
   uint8_t mRfChannels[16];
-  uint8_t mRfChNum;
   uint8_t mFrame[16];
   uint8_t mState;
   uint8_t mErrorTimeoutCode;

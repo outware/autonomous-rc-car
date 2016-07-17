@@ -21,8 +21,15 @@ uint8_t rf_channels[16] = { 0x2b, 0x1f, 0x3d, 0x2c, 0x28, 0x26, 0x32, 0x3a,
                             0x1d, 0x25, 0x2d, 0x18, 0x22, 0x16, 0x31, 0x1c };
 #endif
 
-uint8_t txid[3] = { 0x00, 0x00, 0x00 };
+//Our transmitter ID (WLToys A9x9 car)
+#if 1
+uint8_t txid[3] = { 0xa7, 0x59, 0x03 };
+uint8_t rf_channels[16] = { 0x15, 0x1E, 0x39, 0x28, 0x2C, 0x1C, 0x29, 0x2E,
+                            0x36, 0x2D, 0x18, 0x2B, 0x3A, 0x38, 0x1D, 0x1B };
+#endif
 
+//Blank transmitter ID
+//uint8_t txid[3] = { 0x00, 0x00, 0x00 };
 
 nRF24 radio(CE_PIN, CSN_PIN);
 V202_TX tx(radio);
@@ -191,8 +198,12 @@ void loop()
     }
     //
   }
-  yaw = 16; pitch = 16; roll = 16;
-  flags = 0x10;
+  yaw = 0; //Steering on RC car
+  pitch = 20; //Throttle on RC car
+  roll = 0; //Not used on RC car
+  //flags = 0x10;
+  flags = 0x00;
+
   tx.command(throttle, yaw, pitch, roll, flags);
 
   if (debug) {

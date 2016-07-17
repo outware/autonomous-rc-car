@@ -150,6 +150,16 @@ uint8_t v202Protocol::run( rx_values_t *rx_value )
     		      rx_value->trim_yaw = mFrame[4] - 0x40;
     		      rx_value->trim_pitch = mFrame[5] - 0x40;
     		      rx_value->trim_roll = mFrame[6] - 0x40;
+              // TX id
+              rx_value->frame7 = mFrame[7];
+              rx_value->frame8 = mFrame[8];
+              rx_value->frame9 = mFrame[9];
+              // Unknown
+              rx_value->frame10 = mFrame[10];
+              rx_value->frame11 = mFrame[11];
+              rx_value->frame12 = mFrame[12];
+              rx_value->frame13 = mFrame[13];
+              // Flags
     		      rx_value->flags = mFrame[14];
     		      rx_value->crc = mFrame[15];
     		    }
@@ -235,6 +245,13 @@ uint8_t v202Protocol::run( rx_values_t *rx_value )
             mTxid[0] = mFrame[7];
             mTxid[1] = mFrame[8];
             mTxid[2] = mFrame[9];
+            Serial.print("\t mTxid:");
+            Serial.print(mTxid[0]);
+            Serial.print("\t");
+            Serial.print(mTxid[1]);
+            Serial.print("\t");
+            Serial.println(mTxid[2]);
+
             // Create TX frequency array
             retrieveFrequency();
             mRfChNum = 0;
