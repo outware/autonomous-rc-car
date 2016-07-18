@@ -44,6 +44,17 @@ void v202Protocol::retrieveFrequency()
     // Strange avoidance of channels divisible by 16
     mRfChannels[i] = (val & 0x0f) ? val : val - 3;
   }
+  
+  Serial.print("Setting up RX. Calculated frequencies (mRfChannels): {");
+  int i;
+  for (i = 0; i < sizeof(mRfChannels) - 1; i++){
+      Serial.print("0x"); Serial.print(String(mRfChannels[i],HEX));
+      //Serial.print(mRfChannels[i]);
+      if (i < sizeof(mRfChannels) - 2){
+        Serial.print(", ");
+      }
+  }
+  Serial.println("}");
 }
 /*****************************************************************/
 
@@ -245,12 +256,10 @@ uint8_t v202Protocol::run( rx_values_t *rx_value )
             mTxid[0] = mFrame[7];
             mTxid[1] = mFrame[8];
             mTxid[2] = mFrame[9];
-            Serial.print("\t mTxid:");
-            Serial.print(mTxid[0]);
-            Serial.print("\t");
-            Serial.print(mTxid[1]);
-            Serial.print("\t");
-            Serial.println(mTxid[2]);
+            Serial.print("Setting up RX. Transmitter ID (mTxid): {");
+            Serial.print(mTxid[0]); Serial.print(", ");
+            Serial.print(mTxid[1]); Serial.print(", ");
+            Serial.print(mTxid[2]); Serial.println("}");
 
             // Create TX frequency array
             retrieveFrequency();

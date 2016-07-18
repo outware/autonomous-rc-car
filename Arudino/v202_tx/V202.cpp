@@ -73,7 +73,7 @@ void V202_TX::begin()
   // There is no harm to run it on nRF24L01 because following
   // closing activate command changes state back even if it
   // does something on nRF24L01
-  radio.activate(0x53); // magic for BK2421 bank switch
+  /*radio.activate(0x53); // magic for BK2421 bank switch
   Serial.write("Try to switch banks "); Serial.print(radio.read_register(STATUS)); Serial.write("\n");
   if (radio.read_register(STATUS) & 0x80) {
     Serial.write("BK2421!\n");
@@ -96,7 +96,7 @@ void V202_TX::begin()
     radio.write_register(0x04, (const uint8_t *) "\xC7\x96\x9A\x1B", 4);
     radio.write_register(0x04, (const uint8_t *) "\xC1\x96\x9A\x1B", 4);
   }
-  radio.activate(0x53); // switch bank back
+  radio.activate(0x53); // switch bank back*/
   
   delay(50);
   radio.flush_tx();

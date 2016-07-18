@@ -62,6 +62,7 @@ public:
   void init(nrf24l01p *wireless);
   uint8_t run(rx_values_t *rx_value );
   uint8_t mRfChNum;
+  uint8_t mRfChannels[16];
 
   
 protected:
@@ -71,7 +72,6 @@ protected:
 
   nrf24l01p *mWireless;
   uint8_t mTxid[3];
-  uint8_t mRfChannels[16];
   uint8_t mFrame[16];
   uint8_t mState;
   uint8_t mErrorTimeoutCode;

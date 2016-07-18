@@ -4,10 +4,11 @@ class nRF24;
 class V202_TX {
   nRF24& radio;
   uint8_t txid[3];
-  uint8_t rf_channels[16];
+
   bool packet_sent;
   uint8_t rf_ch_num;
 public:
+  uint8_t rf_channels[16];
   V202_TX(nRF24& radio_) :
     radio(radio_)
   {}

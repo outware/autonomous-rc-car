@@ -24,8 +24,6 @@ uint8_t rf_channels[16] = { 0x2b, 0x1f, 0x3d, 0x2c, 0x28, 0x26, 0x32, 0x3a,
 //Our transmitter ID (WLToys A9x9 car)
 #if 1
 uint8_t txid[3] = { 0xa7, 0x59, 0x03 };
-uint8_t rf_channels[16] = { 0x15, 0x1E, 0x39, 0x28, 0x2C, 0x1C, 0x29, 0x2E,
-                            0x36, 0x2D, 0x18, 0x2B, 0x3A, 0x38, 0x1D, 0x1B };
 #endif
 
 //Blank transmitter ID
@@ -37,19 +35,13 @@ V202_TX tx(radio);
 bool debug = true;
 
 uint8_t throttle, flags;
-int8_t yaw, pitch, roll;
+int8_t yaw, pitch, roll; //NOTE: Naming based on the drone equivalent channel use
 
 int a0, a1, a2, a3;
 int a0min, a0max;
 int a1min, a1max;
 int a2min, a2max;
 int a3min, a3max;
-
-//Fake it till we make it
-int f0 = 110;
-int f1 = 110;
-int f2 = 110;
-int f3 = 110;
 
 void calibrate()
 {
@@ -66,16 +58,6 @@ void initInput()
   pinMode(A2, INPUT);
   pinMode(A3, INPUT);
   calibrate();
-}
-
-bool fakeInput()
-{
-  a0 = f0;
-  a1 = f1;
-  a2 = f2;
-  a3 = f3;
-
-  return true;
 }
 
 bool readInput()
@@ -113,7 +95,23 @@ void setup()
   initInput();
   readInput();
   Serial.begin(115200);
-  tx.setTXId(txid);  
+  Serial.print("---- Arduino 2.4ghz v202 protocol TRANSMITTER ----");
+  tx.setTXId(txid);
+  Serial.print("Setting up TX. Transmitter ID (txid): {");
+  Serial.print(txid[0]); Serial.print(", ");
+  Serial.print(txid[1]); Serial.print(", ");
+  Serial.print(txid[2]); Serial.println("}");
+  
+  Serial.print("Setting up TX. Calculated frequencies: {");
+  int i;
+  for (i = 0; i < sizeof(tx.rf_channels) - 1; i++){
+      Serial.print("0x"); Serial.print(String(tx.rf_channels[i],HEX));
+      //Serial.print(tx.rf_channels[i]);
+      if (i < sizeof(tx.rf_channels) - 2){
+        Serial.print(", ");
+      }
+  }
+  Serial.println("}");
   tx.begin();
   throttle = 0; yaw = 0; pitch = 0; roll = 0; flags = 0;
 
@@ -131,7 +129,6 @@ bool calibrated = false;
 void loop() 
 {
   //bool changed = readInput();
-  bool changed = fakeInput();
   if (false) {
 //  if (changed) {
     Serial.write("sticks: ");
@@ -198,6 +195,7 @@ void loop()
     }
     //
   }
+  throttle = 0; //N/A on RC car
   yaw = 0; //Steering on RC car
   pitch = 20; //Throttle on RC car
   roll = 0; //Not used on RC car

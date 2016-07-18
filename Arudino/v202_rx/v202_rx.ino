@@ -21,7 +21,8 @@ void setup() {
   // SS pin must be set as output to set SPI to master !
   pinMode(SS, OUTPUT);
   Serial.begin(115200);
-  // Set CE pin to D8 (D9) and CS pin to D7 (D53)
+  Serial.print("---- Arduino 2.4ghz v202 protocol RECEIVER ----");
+  // Set CE pin to D8 (D9 on Mega2560) and CS pin to D7 (D53 on Mega2560)
   wireless.setPins(9, 53);
   protocol.init(&wireless);
   
@@ -64,7 +65,8 @@ void loop()
       Serial.print("\t"); Serial.println(rxValues.crc);*/
       //time = newTime;
 
-      Serial.print("0x0");Serial.print(String(protocol.mRfChNum,HEX));  //Channel the packet was received on
+      //Serial.print("0x0");Serial.print(String(protocol.mRfChannels[protocol.mRfChNum],HEX));  //Channel the packet was received on
+      Serial.print(protocol.mRfChannels[protocol.mRfChNum]);  //Channel the packet was received on
       Serial.print("\t");
       Serial.print(newTime - time); //120 ms for 16 Mhz (currently showing as 180ms)
       Serial.print(" :\t");Serial.print(rxValues.throttle);
