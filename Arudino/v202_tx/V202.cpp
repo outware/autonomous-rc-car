@@ -150,12 +150,12 @@ void V202_TX::command(uint8_t throttle, int8_t yaw, int8_t pitch, int8_t roll, u
     buf[2] = (uint8_t) pitch;
     buf[3] = (uint8_t) roll;
     // Trims, middle is 0x40
-    //buf[4] = 0x40; // yaw
-    //buf[5] = 0x40; // pitch
+    buf[4] = 0x40; // yaw
+    buf[5] = 0x40; // pitch
     //buf[6] = 0x40; // roll
-    buf[4] = 0x00; // yaw
-    buf[5] = 0x00; // pitch
-    buf[6] = 0x00; // roll
+    //buf[4] = 0x00; // yaw
+    //buf[5] = 0x00; // pitch
+    buf[6] = 0x00; // roll (matches what our WlToys RC Car handheld TX is sending)
   }
   // TX id
   buf[7] = txid[0];
