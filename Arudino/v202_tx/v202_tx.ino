@@ -32,7 +32,7 @@ uint8_t txid[3] = { 0xa7, 0x59, 0x03 };
 nRF24 radio(CE_PIN, CSN_PIN);
 V202_TX tx(radio);
 
-bool debug = true;
+bool debug = false;
 
 uint8_t throttle, flags;
 int8_t yaw, pitch, roll; //NOTE: Naming based on the drone equivalent channel use
@@ -93,25 +93,14 @@ bool readInput()
 void setup() 
 {
   initInput();
-  readInput();
+  //readInput();
   Serial.begin(115200);
-  Serial.print("---- Arduino 2.4ghz v202 protocol TRANSMITTER ----");
+  Serial.println("---- Arduino 2.4ghz v202 protocol TRANSMITTER ----");
   tx.setTXId(txid);
   Serial.print("Setting up TX. Transmitter ID (txid): {");
   Serial.print(txid[0]); Serial.print(", ");
   Serial.print(txid[1]); Serial.print(", ");
   Serial.print(txid[2]); Serial.println("}");
-  
-  Serial.print("Setting up TX. Calculated frequencies: {");
-  int i;
-  for (i = 0; i < sizeof(tx.rf_channels) - 1; i++){
-      Serial.print("0x"); Serial.print(String(tx.rf_channels[i],HEX));
-      //Serial.print(tx.rf_channels[i]);
-      if (i < sizeof(tx.rf_channels) - 2){
-        Serial.print(", ");
-      }
-  }
-  Serial.println("}");
   tx.begin();
   throttle = 0; yaw = 0; pitch = 0; roll = 0; flags = 0;
 
@@ -128,7 +117,8 @@ bool bind = true;
 bool calibrated = false;
 void loop() 
 {
-  //bool changed = readInput();
+  
+  bool changed = readInput();
   if (false) {
 //  if (changed) {
     Serial.write("sticks: ");
@@ -206,8 +196,8 @@ void loop()
 
   if (debug) {
     Serial.write("Throttle: "); Serial.print(throttle);
-    Serial.write(" Yaw: "); Serial.print(yaw);
-    Serial.write(" Pitch: "); Serial.print(pitch);
+    Serial.write(" Yaw (Steer): "); Serial.print(yaw);
+    Serial.write(" Pitch (Throttle): "); Serial.print(pitch);
     Serial.write(" Roll: "); Serial.print(roll);
     Serial.write(" Flags: "); Serial.println(flags);
   }

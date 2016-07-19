@@ -4,11 +4,14 @@ class nRF24;
 class V202_TX {
   nRF24& radio;
   uint8_t txid[3];
-
+  bool debug = true;
+  bool debug_headers_written = false;
   bool packet_sent;
   uint8_t rf_ch_num;
 public:
   uint8_t rf_channels[16];
+  unsigned long prevTime = 0;
+  unsigned long newTime = 0;
   V202_TX(nRF24& radio_) :
     radio(radio_)
   {}

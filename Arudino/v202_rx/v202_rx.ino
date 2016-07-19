@@ -15,19 +15,24 @@ nrf24l01p wireless;
 v202Protocol protocol;
 
 unsigned long time = 0;
+unsigned long prevTime = 0;
+unsigned long nextTime = 0;
+bool debug = true;
+bool debug_headers_written = false;
  
 // the setup routine runs once when you press reset:
 void setup() {
   // SS pin must be set as output to set SPI to master !
   pinMode(SS, OUTPUT);
   Serial.begin(115200);
-  Serial.print("---- Arduino 2.4ghz v202 protocol RECEIVER ----");
+  Serial.println("---- Arduino 2.4ghz v202 protocol RECEIVER ----");
   // Set CE pin to D8 (D9 on Mega2560) and CS pin to D7 (D53 on Mega2560)
   wireless.setPins(9, 53);
   protocol.init(&wireless);
   
   time = micros();
   Serial.println("Start");
+
 }
 
 rx_values_t rxValues;
@@ -66,27 +71,55 @@ void loop()
       //time = newTime;
 
       //Serial.print("0x0");Serial.print(String(protocol.mRfChannels[protocol.mRfChNum],HEX));  //Channel the packet was received on
-      Serial.print(protocol.mRfChannels[protocol.mRfChNum]);  //Channel the packet was received on
-      Serial.print("\t");
-      Serial.print(newTime - time); //120 ms for 16 Mhz (currently showing as 180ms)
-      Serial.print(" :\t");Serial.print(rxValues.throttle);
-      Serial.print(" :\t Throttle:");Serial.print(rxValues.throttle);
-      Serial.print("\t Yaw (Steer):"); Serial.print(rxValues.yaw);
-      Serial.print("\t Pitch (Throttle):"); Serial.print(rxValues.pitch);
-      Serial.print("\t Roll:"); Serial.print(rxValues.roll);
-      Serial.print("\t TY (ST):"); Serial.print(rxValues.trim_yaw);
-      Serial.print("\t TP (TH):"); Serial.print(rxValues.trim_pitch);
-      Serial.print("\t TR:"); Serial.print(rxValues.trim_roll);
-      Serial.print("\t f6:"); Serial.print(rxValues.frame6);
-      Serial.print("\t f7:"); Serial.print(rxValues.frame7);
-      Serial.print("\t f8:"); Serial.print(rxValues.frame8);
-      Serial.print("\t f9:"); Serial.print(rxValues.frame9);
-      Serial.print("\t f10:"); Serial.print(rxValues.frame10);
-      Serial.print("\t f11:"); Serial.print(rxValues.frame11);
-      Serial.print("\t f12:"); Serial.print(rxValues.frame12);
-      Serial.print("\t f13:"); Serial.print(rxValues.frame13);
-      Serial.print("\t Flags:"); Serial.print(rxValues.flags);
-      Serial.print("\t CRC:"); Serial.println(rxValues.crc);
+      
+      if (debug) {
+            if (!debug_headers_written) { //Print out the table headers
+              Serial.println("---Data headers---");
+              Serial.print("RX Channel");
+              Serial.print("\t Time(ms)");
+              Serial.print("\t Throttle");
+              Serial.print("\t Yaw (Steer)");
+              Serial.print("\t Pitch (Throttle)");
+              Serial.print("\t Roll");
+              Serial.print("\t TY (ST)");
+              Serial.print("\t TP (TH)");
+              Serial.print("\t TR");
+              Serial.print("\t f7");
+              Serial.print("\t f8");
+              Serial.print("\t f9");
+              Serial.print("\t f10");
+              Serial.print("\t f11");
+              Serial.print("\t f12");
+              Serial.print("\t f13");
+              Serial.print("\t Flags");
+              Serial.println("\t CRC");
+              debug_headers_written = true;
+            }  
+
+        // Determine time since last signal sent
+        prevTime = nextTime;
+        nextTime = millis();
+
+        Serial.print("CH");Serial.print(protocol.mRfChNum);Serial.print("[0x");
+        Serial.print(String(protocol.mRfChannels[protocol.mRfChNum],HEX));
+        Serial.print("]\t"); Serial.print(nextTime - prevTime); //120 ms for 16 Mhz (currently showing as 180ms)
+        Serial.print("\t "); Serial.print(rxValues.throttle);
+        Serial.print("\t "); Serial.print(rxValues.yaw);
+        Serial.print("\t "); Serial.print(rxValues.pitch);
+        Serial.print("\t "); Serial.print(rxValues.roll);
+        Serial.print("\t "); Serial.print(rxValues.trim_yaw);
+        Serial.print("\t "); Serial.print(rxValues.trim_pitch);
+        Serial.print("\t "); Serial.print(rxValues.trim_roll);
+        Serial.print("\t "); Serial.print(rxValues.frame7);
+        Serial.print("\t "); Serial.print(rxValues.frame8);
+        Serial.print("\t "); Serial.print(rxValues.frame9);
+        Serial.print("\t "); Serial.print(rxValues.frame10);
+        Serial.print("\t "); Serial.print(rxValues.frame11);
+        Serial.print("\t "); Serial.print(rxValues.frame12);
+        Serial.print("\t "); Serial.print(rxValues.frame13);
+        Serial.print("\t "); Serial.print(rxValues.flags);
+        Serial.print("\t "); Serial.println(rxValues.crc);
+      }
       
     break;
     

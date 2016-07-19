@@ -21,7 +21,6 @@ typedef struct __attribute__((__packed__)) {
   int8_t trim_yaw;
   int8_t trim_pitch;
   int8_t trim_roll;
-  int8_t frame6;
   uint8_t frame7;
   uint8_t frame8;
   uint8_t frame9;

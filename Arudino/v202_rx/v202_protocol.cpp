@@ -186,41 +186,37 @@ uint8_t v202Protocol::run( rx_values_t *rx_value )
       	mErrorTimeoutCode++;
 
       	mLastSignalTime = millis();
-        Serial.print("e 0x0");Serial.print(String(mRfChNum, HEX));Serial.print(" ");Serial.println(newTime - mLastSignalTime);
+        Serial.print("CH");Serial.print(mRfChNum);Serial.print("[0x");Serial.print(String(mRfChannels[mRfChNum],HEX));Serial.print("]\t ");Serial.print(newTime - mLastSignalTime);Serial.print("\t ERROR");
       	uint8_t freq_jump =0;
       	if(mErrorTimeoutCode == ERROR_JUMP_FREQ)
       	{
       		freq_jump  = uint16_t(newTime - mLastSignalTime) / 8 + 1;
       		mTimeout = freq_jump * 8 + 6;
-		      Serial.print("1 ");
+		      Serial.print(" Code: 1 'ERROR_JUMP_FREQ' ");
       	}
       	else if(mErrorTimeoutCode == ERROR_WAIT_PREV_FREQ)
       	{
       		freq_jump  = 10;
       		mTimeout = 120;
-		      Serial.print("2 ");
+		      Serial.print(" Code 2 'ERROR_WAIT_PREV_FREQ' ");
       	}
       	else //if(mErrorTimeoutCode == ERROR_WAIT_ONE_FREQ)
       	{
       		freq_jump = random(1, 15);
       		mTimeout = 250;
-		      Serial.print("3 ");
+		      Serial.print("rror Code 3 ");
       	}
         
-
          mRfChNum+=freq_jump;
           if( mRfChNum > 15) 
             mRfChNum = mRfChNum % 16;
           mWireless->switchFreq(mRfChannels[mRfChNum]);
-
-	   Serial.print("0x0");Serial.print(String(mRfChNum,HEX));Serial.print(" ");Serial.println(mTimeout);
+	        Serial.print("| Next CH:");Serial.print(mRfChNum);Serial.print("[0x");Serial.print(String(mRfChannels[mRfChNum],HEX));Serial.print("] | Timeout: ");Serial.println(mTimeout);
       
       }
 
       if(mErrorTimeoutCode > 0)
         returnValue = ERROR_SIGNAL_LOST;
-
-    
     }
     break;
     // Initial state

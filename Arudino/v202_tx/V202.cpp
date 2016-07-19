@@ -36,6 +36,18 @@ void V202_TX::setTXId(uint8_t txid_[3])
     // Strange avoidance of channels divisible by 16
     rf_channels[i] = (val & 0x0f) ? val : val - 3;
   }
+
+  Serial.print("Setting up TX. Calculated frequencies (rf_channels): {");
+  int i;
+  for (i = 0; i < sizeof(rf_channels) - 1; i++){
+      Serial.print("0x"); Serial.print(String(rf_channels[i],HEX));
+      //Serial.print(rf_channels[i]);
+      if (i < sizeof(rf_channels) - 2){
+        Serial.print(", ");
+      }
+  }
+  Serial.println("}");
+  
 }
 
 void V202_TX::begin()
@@ -116,6 +128,7 @@ void V202_TX::begin()
   // so as long as we have pins to do so, it is wise to turn
   // it back.
 //  radio.ce(LOW);
+
 }
 
 void V202_TX::command(uint8_t throttle, int8_t yaw, int8_t pitch, int8_t roll, uint8_t flags)
@@ -137,9 +150,12 @@ void V202_TX::command(uint8_t throttle, int8_t yaw, int8_t pitch, int8_t roll, u
     buf[2] = (uint8_t) pitch;
     buf[3] = (uint8_t) roll;
     // Trims, middle is 0x40
-    buf[4] = 0x40; // yaw
-    buf[5] = 0x40; // pitch
-    buf[6] = 0x40; // roll
+    //buf[4] = 0x40; // yaw
+    //buf[5] = 0x40; // pitch
+    //buf[6] = 0x40; // roll
+    buf[4] = 0x00; // yaw
+    buf[5] = 0x00; // pitch
+    buf[6] = 0x00; // roll
   }
   // TX id
   buf[7] = txid[0];
@@ -156,6 +172,7 @@ void V202_TX::command(uint8_t throttle, int8_t yaw, int8_t pitch, int8_t roll, u
   uint8_t i;
   for (i = 0; i < 15;  ++i) sum += buf[i];
   buf[15] = sum;
+  
   if (packet_sent) {
     bool report_done = false;
 //    if  (!(radio.read_register(STATUS) & _BV(TX_DS))) { Serial.write("Waiting for radio\n"); report_done = true; }
@@ -172,11 +189,60 @@ void V202_TX::command(uint8_t throttle, int8_t yaw, int8_t pitch, int8_t roll, u
   // hops to a new frequency as soon as valid packet
   // received it does not matter that the packet is
   // not the same one repeated twice - nobody checks this
-  uint8_t rf_ch = rf_channels[rf_ch_num >> 1];
-  rf_ch_num++; if (rf_ch_num >= 32) rf_ch_num = 0;
+  //uint8_t rf_ch = rf_channels[rf_ch_num >> 1]; //Use to repeat each packet twice
+  //rf_ch_num++; if (rf_ch_num >= 32) rf_ch_num = 0; //Use to repeat each packet twice
+
+  uint8_t rf_ch = rf_channels[rf_ch_num]; //Use to only send each packet once
+  rf_ch_num++; if (rf_ch_num >= 16) rf_ch_num = 0; //Use to only send each packet once
 //  Serial.print(rf_ch); Serial.write("\n");
-  Serial.print("Freq: 0x");
-  Serial.println(String(rf_ch, HEX));
+
+  if (debug) {
+      if (!debug_headers_written) { //Print out the table headers
+          Serial.println("---Data headers---");
+          Serial.print("TX Channel");
+          Serial.print("\t Time(ms)");
+          Serial.print("\t Throttle");
+          Serial.print("\t Yaw (Steer):");
+          Serial.print("\t Pitch (Throttle):");
+          Serial.print("\t Roll:");
+          Serial.print("\t TY (ST):");
+          Serial.print("\t TP (TH):");
+          Serial.print("\t TR:");
+          Serial.print("\t f7:");
+          Serial.print("\t f8:");
+          Serial.print("\t f9:");
+          Serial.print("\t f10:");
+          Serial.print("\t f11:");
+          Serial.print("\t f12:");
+          Serial.print("\t f13:");
+          Serial.print("\t Flags:");
+          Serial.println("\t CRC:");
+          debug_headers_written = true;
+        }  
+
+      // Determine time since last signal sent
+      prevTime = newTime;
+      newTime = millis();
+        
+      Serial.print("CH");Serial.print(rf_ch_num);Serial.print("[0x");Serial.print(String(rf_ch,HEX));
+      Serial.print("]\t "); Serial.print(newTime-prevTime); 
+      Serial.print("\t "); Serial.print(buf[0]);
+      Serial.print("\t "); Serial.print(buf[1]);
+      Serial.print("\t "); Serial.print(buf[2]);
+      Serial.print("\t "); Serial.print(buf[3]);
+      Serial.print("\t "); Serial.print(buf[4] - 0x40);
+      Serial.print("\t "); Serial.print(buf[5] - 0x40);
+      Serial.print("\t "); Serial.print(buf[6] - 0x40);
+      Serial.print("\t "); Serial.print(buf[7]);
+      Serial.print("\t "); Serial.print(buf[8]);
+      Serial.print("\t "); Serial.print(buf[9]);
+      Serial.print("\t "); Serial.print(buf[10]);
+      Serial.print("\t "); Serial.print(buf[11]);
+      Serial.print("\t "); Serial.print(buf[12]);
+      Serial.print("\t "); Serial.print(buf[13]);
+      Serial.print("\t "); Serial.print(buf[14]);
+      Serial.print("\t "); Serial.println(buf[15]);
+    }
   radio.write_register(RF_CH, rf_ch);
   radio.flush_tx();
   radio.write_payload(buf, 16);
