@@ -2,8 +2,17 @@
 #include "nRF24L01.h"
 #include "V202.h"
 
+//Arduino Mega
+#if 0
 #define CE_PIN  9
 #define CSN_PIN 53
+#endif
+
+//Arduino Uno
+#if 1
+#define CE_PIN  8
+#define CSN_PIN 7
+#endif
 
 #if 0
 uint8_t txid[3] = { 0xcd, 0x31, 0x71 };

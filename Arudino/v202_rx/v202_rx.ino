@@ -11,6 +11,18 @@
 #include <SPI.h>
 #include "v202_protocol.h"
 
+//Arduino Mega
+#if 0
+#define CE_PIN  9
+#define CSN_PIN 53
+#endif
+
+//Arduino Uno
+#if 1
+#define CE_PIN  8
+#define CSN_PIN 7
+#endif
+
 nrf24l01p wireless; 
 v202Protocol protocol;
 
@@ -26,8 +38,7 @@ void setup() {
   pinMode(SS, OUTPUT);
   Serial.begin(115200);
   Serial.println("---- Arduino 2.4ghz v202 protocol RECEIVER ----");
-  // Set CE pin to D8 (D9 on Mega2560) and CS pin to D7 (D53 on Mega2560)
-  wireless.setPins(9, 53);
+  wireless.setPins(CE_PIN, CSN_PIN); // Set CE pin to D8 (D9 on Mega2560) and CS pin to D7 (D53 on Mega2560)
   protocol.init(&wireless);
   
   time = micros();
