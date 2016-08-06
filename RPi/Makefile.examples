@@ -1,0 +1,36 @@
+#############################################################################
+#
+# Makefile for librf24 examples on Linux
+#
+# License: GPL (General Public License)
+# Author:  gnulnulf <arco@appeltaart.mine.nu>
+# Date:    2013/02/07 (version 1.0)
+#
+# Description:
+# ------------
+# use make all and make install to install the examples
+#
+
+BINARY_PREFIX = rf24
+SOURCES = $(PROGRAMS:=.cpp)
+
+LIBS=-l$(LIB)
+ifeq ($(DRIVER), LittleWire)
+	LIBS+= -llittlewire-spi
+endif
+
+all: $(PROGRAMS)
+
+$(PROGRAMS): $(SOURCES)
+	$(CXX) $(CFLAGS) -I$(HEADER_DIR)/.. -L$(LIB_DIR) $@.cpp $(LIBS) -o $@
+
+clean:
+	@echo "[Cleaning]"
+	rm -rf $(PROGRAMS)
+
+install: all
+	@echo "[Installing examples to $(EXAMPLES_DIR)]"
+	@mkdir -p $(EXAMPLES_DIR)
+	@for prog in $(PROGRAMS); do \
+		install -m 0755 $${prog} $(EXAMPLES_DIR)/$(BINARY_PREFIX)-$${prog}; \
+	done
